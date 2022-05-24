@@ -1,5 +1,5 @@
 # L2P
-This repository contain L2P and Dual prompt implementation in pytorch.  
+This repository contains L2P and Dual prompt implementation in pytorch.  
 Code is based on [PLM4CL](https://github.com/wutong8023/PLM4CL) and Huggingface transformers library is used.  
 
 L2P : [Learning to Prompt for Continual Learning](https://arxiv.org/pdf/2112.08654.pdf)  
