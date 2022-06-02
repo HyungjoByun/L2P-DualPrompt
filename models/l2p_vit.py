@@ -58,13 +58,12 @@ class L2PVIT(ContinualModel):
         
         # ! init promptpool
         self.pool = PromptPool()
-        self.pool.initPool(1,self.pool_size,self.prompt_num,768,768,self.device,embedding_layer=None,init_type=args.init_type) 
-        self.pool.key_freq_past = self.pool.key_freq_now.clone().detach()
-
+        self.pool.initPool(1,self.pool_size,self.prompt_num,768,768,self.device,embedding_layer=None,init_type=args.init_type)
         self.init_opt(args)
         #self.buffer = PERBuffer(self.args.buffer_size, self.device)
     
     def init_opt(self,args):
+        self.pool.key_freq_past = self.pool.key_freq_now.clone().detach()
         key_list = [e for layer_k in self.pool.key_list for e in layer_k]
         prompt_list = [e for layer_p in self.pool.prompt_list for e in layer_p]
         if args.freeze_clf == 0:
