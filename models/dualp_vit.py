@@ -74,22 +74,25 @@ class DUALPVIT(ContinualModel):
             self.opt = torch.optim.AdamW(params=self.learning_param,lr=self.lr)
 
     # ! untouched
-    def similarity(self,pool,q,k,topN):
-        q = nn.functional.normalize(q,dim=-1)
-        k = nn.functional.normalize(k,dim=-1)
+    def similarity(self, pool, q, k, topN):
+        q = nn.functional.normalize(q, dim=-1)
+        k = nn.functional.normalize(k, dim=-1)
 
-        sim = torch.matmul(q,k.T) # (B, T)
-        dist = 1-sim
+        sim = torch.matmul(q, k.T)  # (B, T)
+        dist = 1 - sim
 
-        val, idx = torch.topk(dist,topN,dim=1,largest=False)
-        
+        val, idx = torch.topk(dist, topN, dim=1, largest=False)
+
+        # topk에 해당하는 distance만 모으는 과정(gather함수는 reproducibility불가)
         dist_pick = []
         for b in range(idx.shape[0]):
             pick = []
             for i in range(idx.shape[1]):
-                pick.append(dist[b][idx[b][i]].item())
-            dist_pick.append(pick)
-        dist = torch.tensor(dist_pick)
+                pick.append(dist[b][idx[b][i]])
+            dist_pick.append(torch.stack(pick))
+
+        dist = torch.stack(dist_pick)
+
         return dist, idx
         
     def getPrompts(self,layer,pool,keys):
